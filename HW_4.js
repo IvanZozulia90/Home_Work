@@ -43,7 +43,7 @@ function minPrice (){
     
 
     for (key in this) {
-        if(typeof this[key] === "string" || typeof this[key]){
+        if(typeof this[key] === "string" || typeof this[key] === "n"){
             let price = parseFloat(this[key]);
             if (price < min){
                 min = price
@@ -60,7 +60,7 @@ function maxPrice (){
     let max = -Infinity;
 
     for (key in this){
-        if (typeof this[key] === "string" || typeof this[key] === "number")
+        if (typeof this[key] === "string" )
         {
             let price = parseFloat(this[key]);
             if (price > max){
