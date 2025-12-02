@@ -34,7 +34,7 @@ function price (){
     return sum
 }
 
-console.log(services.price())
+console.log("Total sum Price ",services.price())
 
 
 
@@ -53,7 +53,7 @@ function minPrice (){
     return min
 }
 
-console.log(services.minPrice())
+console.log("Min Price ",services.minPrice())
 
 
 function maxPrice (){
@@ -71,7 +71,7 @@ function maxPrice (){
     return max
 }
 
-console.log(services.maxPrice());
+console.log("Max Price ",services.maxPrice());
 
 
 
