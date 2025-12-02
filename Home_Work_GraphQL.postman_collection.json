@@ -1,0 +1,322 @@
+{
+	"info": {
+		"_postman_id": "b139a3d5-5c23-47b7-aca3-3d5db808ad7f",
+		"name": "Home_Work_GraphQL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36166497",
+		"_collection_link": "https://qa2222-5254.postman.co/workspace/QA_TechPro~68de4131-deca-4f06-bfc5-978347b16045/collection/36166497-b139a3d5-5c23-47b7-aca3-3d5db808ad7f?action=share&source=collection_link&creator=36166497"
+	},
+	"item": [
+		{
+			"name": "HW_16.1",
+			"item": [
+				{
+					"name": "GetAllAbstractCities",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"let respBody = pm.response.json();\r",
+									"\r",
+									"let all = respBody.data.getAllCities;\r",
+									"\r",
+									"let ids = all.map(city => city.id);\r",
+									"// console.log(\"all id\", ids);\r",
+									"\r",
+									"let randomId = [];\r",
+									"\r",
+									"while (randomId.length < 4) {\r",
+									"    let id = ids[Math.floor(Math.random() * ids.length)];\r",
+									"    if (!randomId.includes(id)) {\r",
+									"        randomId.push(id);\r",
+									"    }\r",
+									"}\r",
+									"console.log(randomId);\r",
+									"pm.collectionVariables.set(\"randomId\", randomId);\r",
+									"\r",
+									"let cities = all.filter(city => randomId.includes(city.id));\r",
+									"console.log(cities);\r",
+									"\r",
+									"let squares = cities.map(city => Number(city.square));\r",
+									"console.log(squares);\r",
+									"\r",
+									"let sum = 0;\r",
+									"for (let i = 0; i < squares.length; i++) {\r",
+									"    sum += squares[i];\r",
+									"};\r",
+									"let midleSquares = sum / squares.length;\r",
+									"console.log(midleSquares);\r",
+									"pm.collectionVariables.set(\"midleSquares\", midleSquares);\r",
+									"\r",
+									"pm.test(\"Response has no errors\", function() {\r",
+									"    pm.expect(respBody).to.not.have.property(\"errors\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct structure\", function() {\r",
+									"    pm.expect(respBody.data).to.have.property(\"getAllCities\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query{\r\n  getAllCities{\r\n    id\r\n    name\r\n    square\r\n  }\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCityiesByIds",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let respBody = pm.response.json();",
+									"let currentId = pm.collectionVariables.get(\"randomId\");",
+									"",
+									"let all = respBody.data.getCitiesByIds;",
+									"let ids = all.map(city => city.id);",
+									"",
+									"let min = Math.min(...ids);",
+									"let max = Math.max(...ids);",
+									"console.log(min);",
+									"console.log(max);",
+									"pm.collectionVariables.set(\"min\", min);",
+									"pm.collectionVariables.set(\"max\", max);",
+									"",
+									"pm.test(\"Check ids\", function(){",
+									"    pm.expect(ids).to.eql(currentId)",
+									"});",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query{\r\n  getCitiesByIds(in:[{{randomId}}]){\r\n    id\r\n    name\r\n    square\r\n    ... on City{\r\n        description\r\n    }\r\n  }\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCityiesByRangeId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let respBody = pm.response.json();",
+									"let currentMin = pm.collectionVariables.get(\"min\");",
+									"let currentMax = pm.collectionVariables.get(\"max\");",
+									"",
+									"let all = respBody.data.getCityByRangeId;",
+									"let ids = all.map(city => city.id);",
+									"",
+									"let min = Math.min(...ids);",
+									"let max = Math.max(...ids);",
+									"",
+									"pm.test(\"Min ID is correct\", function () {",
+									"    pm.expect(min).to.eql(currentMin)",
+									"});",
+									"",
+									"pm.test(\"Max ID is correct\", function () {",
+									"    pm.expect(max).to.eql(currentMax)",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query{\r\n  getCityByRangeId(filter:{minId:{{min}}, maxId:{{max}}}){\r\n    id\r\n    name\r\n    square\r\n  }\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddCity",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let city = pm.collectionVariables.replaceIn(\"{{$randomCity}}\");",
+									"console.log(city)",
+									"",
+									"pm.collectionVariables.set(\"city\", city);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let respBody = pm.response.json();",
+									"let addCity = respBody.data.addCity; ",
+									"",
+									"let curresntSquare = pm.collectionVariables.get(\"midleSquares\");",
+									"let city = pm.collectionVariables.get(\"city\"); ",
+									"console.log(curresntSquare)",
+									"",
+									"",
+									"pm.test(\"Check square\", function () {",
+									"    pm.expect(addCity.square).to.equal(curresntSquare);",
+									"})",
+									"",
+									"pm.test(\"Check Validn City\", function() {",
+									"    pm.expect(addCity.name).to.equal(city);",
+									"})",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation{\r\n  addCity(name:\"{{city}}\", square:{{midleSquares}},description:\"Best\"){\r\n    id\r\n    name\r\n    square\r\n    ... on City{\r\n      description\r\n    }\r\n  }\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "https://graphql-ukrainian-cities.hillel.it/graphql",
+			"type": "string"
+		},
+		{
+			"key": "minId",
+			"value": "10",
+			"type": "string"
+		},
+		{
+			"key": "maxId",
+			"value": "15",
+			"type": "string"
+		},
+		{
+			"key": "randomId",
+			"value": ""
+		},
+		{
+			"key": "min",
+			"value": ""
+		},
+		{
+			"key": "max",
+			"value": ""
+		},
+		{
+			"key": "midleSquares",
+			"value": ""
+		},
+		{
+			"key": "city",
+			"value": ""
+		}
+	]
+}
