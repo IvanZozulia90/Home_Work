@@ -1,0 +1,11 @@
+{
+  "id": "dev-environment",
+  "name": "DEV",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "https://qauto2.forstudy.space/api",
+      "enabled": true
+    }
+  ]
+}

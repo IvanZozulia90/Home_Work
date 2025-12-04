@@ -1,0 +1,11 @@
+{
+  "id": "prod-environment",
+  "name": "PROD",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "https://qauto.forstudy.space/api",
+      "enabled": true
+    }
+  ]
+}
