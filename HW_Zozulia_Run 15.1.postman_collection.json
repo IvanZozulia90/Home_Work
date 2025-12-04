@@ -1,0 +1,303 @@
+{
+	"info": {
+		"_postman_id": "415a00db-09fb-41c1-87ee-453c2c8ac8e7",
+		"name": "HW_Zozulia_Run 15.1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36166497",
+		"_collection_link": "https://qa2222-5254.postman.co/workspace/QA_TechPro~68de4131-deca-4f06-bfc5-978347b16045/collection/36166497-415a00db-09fb-41c1-87ee-453c2c8ac8e7?action=share&source=collection_link&creator=36166497"
+	},
+	"item": [
+		{
+			"name": "Create User Test_Run",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var url = pm.info.requestName;",
+							"pm.collectionVariables.set(\"Re_Call\", url);",
+							"",
+							"var name = \"ivan.zozulia\";",
+							"var randNum = Math.floor(Math.random() * 100);",
+							"const email = name + randNum + `@gmail.com`;",
+							"console.log(email);",
+							"",
+							"pm.collectionVariables.set(\"email\", email);",
+							"",
+							"var userName = pm.environment.replaceIn('{{$randomFirstName}}');",
+							"var userLastName = pm.environment.replaceIn('{{$randomLastName}}');",
+							"",
+							"pm.collectionVariables.set(\"userName\", userName);",
+							"pm.collectionVariables.set(\"userLastName\", userLastName);",
+							"",
+							"",
+							"var emailReg = /^\\w+(\\.\\w+)@(gmail\\.com)$/;",
+							"",
+							"pm.test(\"Email is valid\", function() {",
+							"    pm.expect(emailReg.test(email)).to.be.true;",
+							"});",
+							"",
+							"",
+							"const dataTest = [",
+							"    {",
+							"        testCaseName: \"empty PWD\",",
+							"        testData: {",
+							"            pwd: \"\",",
+							"            pwd2: \"\"",
+							"        },",
+							"        expectedResult:{",
+							"            message: \"Password is required\",",
+							"            statusCode: 400 ",
+							"        }",
+							"    },",
+							"    {",
+							"        testCaseName: \"Re-enter PWD\",",
+							"        testData: {",
+							"            pwd: \"Password1\",",
+							"            pwd2: \"\"",
+							"        },",
+							"        expectedResult:{",
+							"            message: \"Re-enter password required\",",
+							"            statusCode: 400 ",
+							"        }",
+							"    },",
+							"    {",
+							"        testCaseName: \"too_short\",",
+							"        testData: {",
+							"            pwd: \"Ab3x7\",",
+							"            pwd2: \"Ab3x7\"",
+							"        },",
+							"        expectedResult:{",
+							"            message: \"Password has to be from 8 to 15 characters long and contain at least one integer, one capital, and one small letter\",",
+							"            statusCode: 400 ",
+							"        }",
+							"    },",
+							"    {",
+							"        testCaseName: \"too_long\",",
+							"        testData: {",
+							"            pwd: \"Abcdefghijklmnop1\",",
+							"            pwd2: \"Abcdefghijklmnop1\"",
+							"        },",
+							"        expectedResult:{",
+							"            message: \"Password has to be from 8 to 15 characters long and contain at least one integer, one capital, and one small letter\",",
+							"            statusCode: 400 ",
+							"        }",
+							"    },",
+							"    {",
+							"        testCaseName: \"No lowercase letter\",",
+							"        testData: {",
+							"            pwd: \"PASSWORD1\",",
+							"            pwd2: \"PASSWORD1\"",
+							"        },",
+							"        expectedResult:{",
+							"            message: \"Password has to be from 8 to 15 characters long and contain at least one integer, one capital, and one small letter\",",
+							"            statusCode: 400 ",
+							"        }",
+							"    },",
+							"    {",
+							"        testCaseName: \"No number\",",
+							"        testData: {",
+							"            pwd: \"Passwordd\",",
+							"            pwd2: \"Passwordd\"",
+							"        },",
+							"        expectedResult:{",
+							"            message: \"Password has to be from 8 to 15 characters long and contain at least one integer, one capital, and one small letter\",",
+							"            statusCode: 400 ",
+							"        }",
+							"    },",
+							"    {",
+							"        testCaseName: \"incorrect_repeat\",",
+							"        testData: {",
+							"            pwd: \"Password1\",",
+							"            pwd2: \"Password2\"",
+							"        },",
+							"        expectedResult:{",
+							"            message: \"Re-enter password required\",",
+							"            statusCode: 400 ",
+							"        }",
+							"    },",
+							"    {",
+							"        testCaseName: \"empty_password\",",
+							"        testData: {",
+							"            pwd: \"\",",
+							"            pwd2: \"Password2\"",
+							"        },",
+							"        expectedResult:{",
+							"            message: \"Password required\",",
+							"            statusCode: 400 ",
+							"        }",
+							"    },",
+							"    {",
+							"        testCaseName: \"valid case\",",
+							"        testData: {",
+							"            pwd: \"Qwerty12345\",",
+							"            pwd2: \"Qwerty12345\"",
+							"        },",
+							"        expectedResult:{",
+							"            message: \"Password required\",",
+							"            statusCode: 201 ",
+							"        }",
+							"    },                   ",
+							"]",
+							"",
+							"if (!pm.collectionVariables.get(\"dataTest\")) {",
+							"    pm.collectionVariables.set(\"dataTest\", JSON.stringify(dataTest));",
+							"    pm.collectionVariables.set(\"testIndex\", \"0\");",
+							"}",
+							"",
+							"",
+							"let index = parseInt(pm.collectionVariables.get(\"testIndex\"));",
+							"let tests = JSON.parse(pm.collectionVariables.get(\"dataTest\"));",
+							"let current = tests[index];",
+							"console.log(\"index pre \", current);",
+							"",
+							"pm.collectionVariables.set(\"testName\", current.testCaseName);",
+							"pm.collectionVariables.set(\"pwd\", current.testData.pwd);",
+							"pm.collectionVariables.set(\"pwd2\", current.testData.pwd2);",
+							"pm.collectionVariables.set(\"message\", current.expectedResult.message);",
+							"pm.collectionVariables.set(\"statusCode\", current.expectedResult.statusCode);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var respBody = pm.response.json();",
+							"",
+							"let re_call = pm.collectionVariables.get(\"Re_Call\");",
+							"console.log(\"url \"+ re_call);",
+							"",
+							"let index = parseInt(pm.collectionVariables.get(\"testIndex\"));",
+							"let tests = JSON.parse(pm.collectionVariables.get(\"dataTest\"));",
+							"let current = tests[index];",
+							"let test = pm.collectionVariables.get(\"testName\");",
+							"let status = pm.collectionVariables.get(\"statusCode\");",
+							"let message = pm.collectionVariables.get(\"message\");",
+							"",
+							"pm.test(`Status code of test \"${test}\"`, function() {",
+							"    pm.response.to.have.status(status);",
+							"});",
+							"",
+							"pm.test(`Message from test \"${test}\"`, function() {",
+							"    pm.expect(respBody.message).to.eql(message);",
+							"})",
+							"",
+							"index++;",
+							"pm.collectionVariables.set(\"testIndex\", index.toString());",
+							"console.log(\"post\", index);",
+							"",
+							"if (index < tests.length) {",
+							"    pm.execution.setNextRequest(re_call);",
+							"}else{",
+							"    pm.collectionVariables.unset(\"testIndex\");",
+							"    pm.collectionVariables.unset(\"dataTest\");",
+							"    pm.execution.setNextRequest(null);",
+							"};",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"{{$randomFirstName}}\",\n  \"lastName\": \"{{$randomLastName}}\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{pwd}}\",\n  \"repeatPassword\": \"{{pwd2}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/auth/signup",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					"let baseUrl = pm.iterationData.get(\"baseUrl\");",
+					"pm.collectionVariables.set(\"baseURL\", baseUrl);"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Re_Call",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "userName",
+			"value": ""
+		},
+		{
+			"key": "userLastName",
+			"value": ""
+		},
+		{
+			"key": "testName",
+			"value": ""
+		},
+		{
+			"key": "pwd",
+			"value": ""
+		},
+		{
+			"key": "pwd2",
+			"value": ""
+		},
+		{
+			"key": "message",
+			"value": ""
+		},
+		{
+			"key": "statusCode",
+			"value": ""
+		},
+		{
+			"key": "baseURL",
+			"value": ""
+		}
+	]
+}
