@@ -1,0 +1,414 @@
+{
+	"info": {
+		"_postman_id": "12d86e20-27db-4074-9ea9-05eef84cb602",
+		"name": "Run test Search",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23790446",
+		"_collection_link": "https://fora-tzd.postman.co/workspace/Fora-PDC-F9~84727449-c9b1-48b7-b8e5-3dd39fb02943/collection/23790446-12d86e20-27db-4074-9ea9-05eef84cb602?action=share&source=collection_link&creator=23790446"
+	},
+	"item": [
+		{
+			"name": "Authorization Get Token Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"var access_token = jsonData.access_token\r",
+							"\r",
+							"pm.environment.set(\"access_token\", jsonData.access_token);\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "bar_code",
+							"value": "{{bar_code}}",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "fora_pdc",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "barcode_pin",
+							"type": "text"
+						},
+						{
+							"key": "pin_code",
+							"value": "1990",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{Auth}}/connect/token",
+					"host": [
+						"{{Auth}}"
+					],
+					"path": [
+						"connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Assortment",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"\r",
+							"var testCases = [\r",
+							"    {\r",
+							"        testName: \"Valid barcode\",\r",
+							"        testData: {\r",
+							"            barcode: 11522159152189\r",
+							"        },\r",
+							"        expectedResult:{\r",
+							"            statusCode: 200\r",
+							"        }\r",
+							"    },\r",
+							"    {\r",
+							"        testName: \"Valid assortment\",\r",
+							"        testData: {\r",
+							"            assortmentId: 1773\r",
+							"        },\r",
+							"        expectedResult:{\r",
+							"            statusCode: 200\r",
+							"        }\r",
+							"    },\r",
+							"    {\r",
+							"        testName: \"Valid search\",\r",
+							"        testData: {\r",
+							"            name: \"кав\"\r",
+							"        },\r",
+							"        expectedResult:{\r",
+							"            statusCode: 200\r",
+							"        }\r",
+							"    },\r",
+							"    {\r",
+							"        testName: \"Not valid barcode\",\r",
+							"        testData: {\r",
+							"            barcode: 1010101\r",
+							"        },\r",
+							"        expectedResult:{\r",
+							"            statusCode: 400,\r",
+							"            error: \"The length of 'barcode' must be at least 8 characters. You entered 7 characters.\"\r",
+							"        }\r",
+							"    }\r",
+							"];\r",
+							"\r",
+							"if (!pm.collectionVariables.get(\"testCases\")){\r",
+							"    pm.collectionVariables.set(\"testCases\", JSON.stringify(testCases));\r",
+							"    pm.collectionVariables.set(\"testIndex\", 0);\r",
+							"};\r",
+							"\r",
+							"var index = parseInt(pm.collectionVariables.get(\"testIndex\"));\r",
+							"var test = JSON.parse(pm.collectionVariables.get(\"testCases\"));\r",
+							"var current = test[index];\r",
+							"console.log(index);\r",
+							"\r",
+							"pm.collectionVariables.set(\"testName\", current.testName);\r",
+							"pm.collectionVariables.set(\"expectedStatusCode\", current.expectedResult.statusCode);\r",
+							"pm.collectionVariables.set(\"error\", current.expectedResult.error);\r",
+							"\r",
+							"pm.request.url.query.clear();\r",
+							"pm.request.url.query.add({ key: \"filialId\", value: \"1\" });\r",
+							"\r",
+							"Object.entries(current.testData).forEach(([key, value]) => {\r",
+							"    pm.request.url.query.add({ key, value: String(value) });\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"var respBody = pm.response.json();\r",
+							"\r",
+							"// var re_call = pm.collectionVariables.get(\"re_call\");\r",
+							"// console.log(\"Next request:\", re_call);\r",
+							"\r",
+							"var index = parseInt(pm.collectionVariables.get(\"testIndex\"));\r",
+							"var tests = JSON.parse(pm.collectionVariables.get(\"testCases\"));\r",
+							"var current = tests[index];\r",
+							"var test = pm.collectionVariables.get(\"testName\");\r",
+							"var status = pm.collectionVariables.get(\"expectedStatusCode\");\r",
+							"var error = pm.collectionVariables.get(\"error\");\r",
+							"\r",
+							"pm.test(`Status code of \"${test}\"`, function () {\r",
+							"    if (status == \"400\"){\r",
+							"        pm.expect(pm.response.code).to.eql(status);\r",
+							"        pm.expect(respBody.validationPropsErrors.barcode[0]).to.eql(error);\r",
+							"    }else if (status == \"200\"){\r",
+							"        pm.expect(pm.response.code).to.eql(status);\r",
+							"        pm.expect(respBody, \"Object response must not be empty\").to.not.be.empty;\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"index++;\r",
+							"pm.collectionVariables.set(\"testIndex\", index.toString());\r",
+							"\r",
+							"if (index < tests.length) {\r",
+							"    pm.execution.setNextRequest(\"Search Assortment\");\r",
+							"}else{\r",
+							"    pm.collectionVariables.unset(\"testIndex\");\r",
+							"    pm.collectionVariables.unset(\"testCases\");\r",
+							"    pm.execution.setNextRequest(\"Info Assortment\")\r",
+							"}\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}/api/assortmentCard/search",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"assortmentCard",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Info Assortment",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const testCases = [\r",
+							"    {\r",
+							"        testName: \"Valid Barcode scan\",\r",
+							"        testData: {\r",
+							"            barcode: 2900050299015\r",
+							"        },\r",
+							"        expectedResult: {\r",
+							"            statusCode: 200\r",
+							"        }\r",
+							"    },\r",
+							"    {\r",
+							"        testName: \"Valid QR Scan\",\r",
+							"        testData: {\r",
+							"            qrCode: \"i.fora.ua/b0IdGe?V=1|1773|43.90|43.90|||||0|1|1\"\r",
+							"        },\r",
+							"        expectedResult: {\r",
+							"            statusCode: 200\r",
+							"        }\r",
+							"    },\r",
+							"    {\r",
+							"        testName: \"Valid AssortmentId\",\r",
+							"        testData: {\r",
+							"            assortmentId: 1771\r",
+							"        },\r",
+							"        expectedResult: {\r",
+							"            statusCode: 200\r",
+							"        }\r",
+							"    }\r",
+							"]\r",
+							"\r",
+							"if (!pm.collectionVariables.get(\"testCases\")){\r",
+							"    pm.collectionVariables.set(\"testCases\", JSON.stringify(testCases));\r",
+							"    pm.collectionVariables.set(\"testIndex\", 0);\r",
+							"};\r",
+							"\r",
+							"var index = parseInt(pm.collectionVariables.get(\"testIndex\"));\r",
+							"var test = JSON.parse(pm.collectionVariables.get(\"testCases\"));\r",
+							"var current = test[index];\r",
+							"\r",
+							"pm.collectionVariables.set(\"testName\", current.testName);\r",
+							"pm.collectionVariables.set(\"expectedStatusCode\", current.expectedResult.statusCode);\r",
+							"\r",
+							"pm.request.url.query.clear();\r",
+							"pm.request.url.query.add({ key: \"filialId\", value: \"1\" });\r",
+							"\r",
+							"Object.entries(current.testData).forEach(([key, value]) => {\r",
+							"    pm.request.url.query.add({ key, value: String(value) });\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var respBody = pm.response.json();\r",
+							"\r",
+							"var index = parseInt(pm.collectionVariables.get(\"testIndex\"));\r",
+							"var tests = JSON.parse(pm.collectionVariables.get(\"testCases\"));\r",
+							"var current = tests[index];\r",
+							"var test = pm.collectionVariables.get(\"testName\");\r",
+							"var status = pm.collectionVariables.get(\"expectedStatusCode\");\r",
+							"\r",
+							"pm.test(`Status code of \"${test}\"`, function () {\r",
+							"    if (status == \"400\"){\r",
+							"        pm.expect(pm.response.code).to.eql(status);\r",
+							"    }else if (status == \"200\"){\r",
+							"        pm.expect(pm.response.code).to.eql(status);\r",
+							"        pm.expect(respBody, \"Object response must not be empty\").to.not.be.empty;\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"index++;\r",
+							"pm.collectionVariables.set(\"testIndex\", index.toString());\r",
+							"\r",
+							"if (index < tests.length) {\r",
+							"    pm.execution.setNextRequest(\"Info Assortment\");\r",
+							"}else{\r",
+							"    pm.collectionVariables.unset(\"testIndex\");\r",
+							"    pm.collectionVariables.unset(\"testCases\");\r",
+							"    pm.execution.setNextRequest(null)\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}/api/assortmentCard/info",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"assortmentCard",
+						"info"
+					],
+					"query": [
+						{
+							"key": "filialId",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "barcode",
+							"value": "2924050299011",
+							"disabled": true
+						},
+						{
+							"key": "qrCode",
+							"value": "i.fora.ua/b0IdGe?V=1|1773|43.90|43.90|||||0|1|1",
+							"disabled": true
+						},
+						{
+							"key": "assortmentId",
+							"value": "1771",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "testName",
+			"value": ""
+		},
+		{
+			"key": "expectedStatusCode",
+			"value": ""
+		},
+		{
+			"key": "error",
+			"value": ""
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		}
+	]
+}
