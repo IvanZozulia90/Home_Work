@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "12d86e20-27db-4074-9ea9-05eef84cb602",
+		"_postman_id": "54dde0e1-4d8d-4883-952d-6767dac6fc0f",
 		"name": "Run test Search",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "23790446",
-		"_collection_link": "https://fora-tzd.postman.co/workspace/Fora-PDC-F9~84727449-c9b1-48b7-b8e5-3dd39fb02943/collection/23790446-12d86e20-27db-4074-9ea9-05eef84cb602?action=share&source=collection_link&creator=23790446"
+		"_exporter_id": "36166497",
+		"_collection_link": "https://qa2222-5254.postman.co/workspace/QA_TechPro~68de4131-deca-4f06-bfc5-978347b16045/collection/36166497-54dde0e1-4d8d-4883-952d-6767dac6fc0f?action=share&source=collection_link&creator=36166497"
 	},
 	"item": [
 		{
@@ -35,7 +35,7 @@
 					"urlencoded": [
 						{
 							"key": "bar_code",
-							"value": "{{bar_code}}",
+							"value": "0000000003113",
 							"type": "text"
 						},
 						{
